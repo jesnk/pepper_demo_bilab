@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tour</title>
+    <style>
+        html{
+            width : 100%;
+            height : 100%;
+            font-family: system-ui;
+        }
+        body{
+            width : 100%;
+            height : 100%;
+            margin: 0px;
+        }
+        .wrapper{
+            padding : 40px;
+            height : 90%;
+        }
+        .border{
+            border: black 3px solid;
+            height : 100%;
+
+        }
+        .top{
+            display: flex;
+            height: 20%
+        }
+        .middle{
+            display: flex;
+            height: 60%
+        }
+        .bottom{
+            display: flex;
+            height: 20%;
+            padding: 30px;
+        }
+        .voice_wrapper{
+            width: 10%;
+        }
+        .voice_mark{
+            width: 100px;
+            height: 100px;
+            padding: 20px;
+        }
+        .voice_shower{
+            width: 80%;
+            border: 3px solid;
+            margin: 30px;
+            border-radius: 10px;
+        }
+        .snu_wrapper{
+            width: 10%;
+            padding: 20px;
+        }
+        .snu_mark{
+            width: 100px;
+            height: 100px;
+        }
+        .left{
+            border-radius: 10px;
+            border: 10px solid;
+            width: 50%;
+            margin: 30px;
+        }
+        .right{
+            margin: 30px;
+            border-radius: 10px;
+            border: 10px solid;
+            width: 50%;
+        }
+        .button_wrapper{
+            padding: 40px;
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            font-weight: 700;
+            font-size: 50px;
+
+        }
+        .tour{
+            height: 100%;
+            position: relative;
+        }
+        .tour-img{
+            height: 200px;
+        }
+        .entertain{
+            height: 100%;
+            position: relative;
+        }
+        .entertain-img{
+            height: 200px;
+        }
+        .bottom-blank{
+            width: 30%;
+            text-align: center;
+            font-weight: 700;
+            font-size: 40px;
+        }
+        .bottom-back{
+            font-weight: 700;
+            font-size: 40px;
+            width: 40%;
+            text-align: center;
+        }
+        .bottom-aboutme{
+            font-weight: 700;
+            font-size: 40px;
+            width: 30%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="border">
+        <div class="top">
+            <div class="voice_wrapper">
+                <img class="voice_mark" src="src/voice.png">
+            </div>
+            <div class="voice_shower"></div>
+            <div class="snu_wrapper">
+                <img class="snu_mark" src="src/snu.svg">
+            </div>
+
+        </div>
+        <div class="middle">
+            <div class="left">
+                <div class="button_wrapper">
+                    <div class="tour">
+                        <img class="tour-img" src="src/map.png">
+                    </div>
+                    <div>OUR LAB</div>
+                </div>
+            </div>
+            <div class="right">
+                <div class="button_wrapper">
+                    <div class="entertain">
+                        <img class="entertain-img" src="src/robot1.png">
+                    </div>
+                    <div>ROBOTS</div>
+                </div>
+            </div>
+        </div>
+        <div class="bottom">
+            <div class="bottom-blank">BACK</div>
+            <div class="bottom-back">BACK TO START</div>
+            <div class="bottom-aboutme">ABOUT ME</div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

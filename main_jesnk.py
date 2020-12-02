@@ -20,14 +20,28 @@ def touch_callback(x, y) :
     print(signalID)
 
 class Monitor_input :
-    def __init__(self, tabletService,asrService,  touch_list = [], word_list = []) :
+    def __init__(self, tabletService, touch_list = [], word_list = []) :
 	self.target_touch_list = touch_list
+        self.target_word_list = word_list
 	self.signalID = tabletService.onTouchDown.connect(self.touch_callback)
 	self.tabletService = tabletService 
-	self.asr_service = asrService
 	self.touched_position = None
 	self.exit_flag = False
 	self.ret = {}
+        self.memory = session.service("ALMemory")
+        self.asr = session.service("ALSpeechRecognition")
+        self.asr.pause(True)
+        self.asr.setLanguage("Korean")
+        try :
+            self.asr.unsubscribe("asr")
+        except :
+            pass
+        self.asr.pause(True)
+        #asr.setAudioExpression(False)
+        #asr_mem_sub = memory.subscribeToEvent('WordRecognized',"test_asr",'asr_callback')
+
+        
+
 
     def check_valid_touch(self) :
 	for i in self.target_touch_list :
@@ -48,10 +62,23 @@ class Monitor_input :
 
 	print("class_ x ",x," y ",y)
 
+    def asr_callback(self,msg) :
+        # Threshold
+        if msg[1] > 0.5 :
+            print(msg[0],msg[1], " is returned")
+            self.ret['type'] = 'speech'
+            self.ret['word'] = msg[0]
+            self.exit_flag = True
+
     def wait_for_get_input(self) :
-	while not self.exit_flag :
+        self.asr.setVocabulary(self.target_word_list,False)
+        self.asr.subscribe('asr')
+        asr_mem_sub = self.memory.subscriber("WordRecognized")
+        asr_mem_sub.signal.connect(self.asr_callback)
+        while not self.exit_flag :
 	    time.sleep(0.01)
 
+        self.asr.unsubscribe('asr')
 	self.exit_flag = False
 	return self.ret
 
@@ -59,49 +86,56 @@ class Monitor_input :
 	self.target_touch_list = touch_list
     def set_target_word_list(self, word_list) :
 	self.target_word_list = word_list
-	self.asr_service.setVocabulary(self.target_word_list)
-	print(self.asr_service.subscribe("ASR"))
-	self.asr_service.WordRecognized()
     def __del__(self) :
 	self.tabletService.onTouchDown.disconnect(self.touch_callback)
-	self.asr_service.unsubscribe("ASR")
-
+	self.asr.unsubscribe("ASR")
 
 def main_tablet(session) :
  
     tabletService = session.service("ALTabletService")
-    asr_service = session.service("ALSpeechRecognition")
     tts_service = session.service("ALTextToSpeech")
     tts_service.setLanguage("English")
+    tts_service.setParameter("defaultVoiceSpeed", 70)
+    tts_service.setVolume(0.5)
+
     print("Test")
     tabletService.enableWifi()
     #tabletService.loadApplication('browser')
+    tts_service.say("hi")
+
+    tabletService.showWebview("http://198.18.0.1/index.html")
+    time.sleep(100)
 
     #tabletService.showWebview("http://198.168.1.125/home/nao/html/index.html")
     #tabletService.showWebview("http://198.18.0.1/index.html")
     tabletService.hideWebview()
     tabletService.showWebview("http://198.18.0.1/apps/bi-html/index.html")
-    monitor_input = Monitor_input(tabletService,asr_service)
+    monitor_input = Monitor_input(tabletService)
     monitor_input.set_target_touch_list([LEFT_SIDE,RIGHT_SIDE])
-    monitor_input.set_target_word_list(["yes","no","hi"])
+    monitor_input.set_target_word_list(["안녕","페퍼","잘가","다음","처음"])
 
     while (True) :
 	ret = monitor_input.wait_for_get_input()
 	if ret['type'] == 'touch' :
 	    if ret['touch_position'] == 'RIGHT_SIDE' :
 		tts_service.say("Right side")
+                tabletService.showWebview("http://198.18.0.1/apps/bi-html/1.html")
 	    elif ret['touch_position'] == "LEFT_SIDE" :
 		tts_service.say("Left side")
+                tabletService.showWebview("http://198.18.0.1/apps/bi-html/index.html")
+        elif ret['type'] == 'speech' :
+            if ret['word'] == '잘가' :
+                break
+            if ret['word'] == '다음' :
+                tabletService.showWebview("http://198.18.0.1/apps/bi-html/1.html")
+            if ret['word'] == '처음' :
+                tabletService.showWebview("http://198.18.0.1/apps/bi-html/index.html")
+
 
     print("passed 2")
-
-
     #global signalID
     #signalID = tabletService.onTouchDown.connect(touch_callback)
-    
 
-
-    time.sleep(1150)
     tabletService.hideWebview()
     print("Finished")
 

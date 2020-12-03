@@ -8,10 +8,15 @@ import subprocess
 import time
 import vision_definitions
 import touch
+from threading import Thread
+
+sys.path.insert(0, './motion')
+import entertain
 
 
 FRAME_WIDTH = 1280
 FRAME_HEIGHT = 800
+DEFAULT_VOLUME = 60
 
 # jesnk touch
 TOUCH_LIST = {}
@@ -294,6 +299,8 @@ def transition(srv,scene,input_ret) :
                 srv['tablet'].showWebview(get_html_address(next_scene))
                 srv['tts'].say("이전")
                 return scene_data[next_scene]
+
+
     if scene == 'entertain' :
         if input_ret['type'] == 'touch' :
             if input_ret['touch_position'] == 'BUTTON_MIDDLE_DOWN' :
@@ -308,12 +315,17 @@ def transition(srv,scene,input_ret) :
                 return scene_data[next_scene]
 
             if input_ret['touch_position'] == 'BUTTON_LEFT' :
-                # Elep
+                # jesnk test
+                #file_id = srv['audio_player'].loadFile("/opt/aldebaran/www/apps/bi-sound/test.mp3")
+                #srv['audio_player'].setVolume(30)
+                srv['audio_player'].post.playFileFromPosition("/opt/aldebaran/www/apps/bi-sound/test.mp3",40)
+                #srv['audio_player'].setVolume(DEFAULT_VOLUME)
+
+                entertain.elephant(srv)
                 pass
             if input_ret['touch_position'] == 'BUTTON_RIGHT' :
                 #Dance
                 pass
-
 
 # jesnk 1
 
@@ -327,10 +339,12 @@ def main(session) :
     srv = {}
     srv['tablet'] = session.service("ALTabletService")
     srv['memory'] = session.service("ALMemory")
+    srv['motion'] = session.service("ALMotion")
     srv['asr'] = session.service("ALSpeechRecognition")
     srv['tts'] = session.service("ALTextToSpeech")
     srv['tts'].setVolume(0.1)
     srv['tts'].setParameter("defaultVoiceSpeed",70)
+    srv['audio_player'] = session.service("ALAudioPlayer")
 
     # Present Inital Page
     srv['tablet'].enableWifi()

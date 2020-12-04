@@ -8,6 +8,7 @@ import subprocess
 import time
 import vision_definitions
 import touch
+from naoqi import ALProxy
 from threading import Thread
 
 sys.path.insert(0, './motion')
@@ -38,7 +39,7 @@ scene_data['init'] = ['init',['RIGHT_SIDE','LEFT_SIDE'],['잘가','다음','처�
 scene_data['1'] = ['1',['RIGHT_SIDE','LEFT_SIDE'],['잘가','다음','처음']]
 scene_data['exit'] = ['exit',[],[]]
 
-scene_data['home'] = ['home',['BUTTON_MIDDLE_DOWN'],['시작']]
+scene_data['home'] = ['home',['BUTTON_MIDDLE_DOWN','JESNK_SIDE'],['start','hi','pepper']]
 
 scene_data['first_menu'] = ['first_menu',\
      ['JESNK_SIDE','BUTTON_RIGHT','BUTTON_LEFT',\
@@ -73,7 +74,7 @@ class Monitor_input :
         self.memory = srv['memory']
         self.asr = srv['asr']
         self.asr.pause(True)
-        self.asr.setLanguage("Korean")
+        self.asr.setLanguage("English")
         #self.asr.setLanguage("English")
 
         self.debug_mode = False
@@ -84,8 +85,6 @@ class Monitor_input :
         except :
             pass
         self.asr.pause(True)
-        #asr.setAudioExpression(False)
-        #asr_mem_sub = memory.subscribeToEvent('WordRecognized',"test_asr",'asr_callback')
 
 
     def check_valid_touch(self) :
@@ -129,6 +128,7 @@ class Monitor_input :
 
     def asr_callback(self,msg) :
         # Threshold
+        print(msg[0]," is recognized. ",msg[1])
         if msg[1] > 0.5 :
             print(msg[0],msg[1], " is returned")
             self.ret['type'] = 'speech'
@@ -242,6 +242,31 @@ def transition(srv,scene,input_ret) :
 
                 return scene_data[next_scene]
 
+
+            # jesnk : test
+
+            if input_ret['touch_position'] == 'JESNK_SIDE' :
+
+
+                file_path = "/opt/aldebaran/www/apps/bi-sound/background.mp3"
+                #srv['tts'].post.say('yes')
+                player = ALProxy("ALAudioPlayer")
+                player.post.playFileFromPosition(file_path,120)
+
+                #file_id = srv['audio_player'].loadFile("/opt/aldebaran/www/apps/bi-sound/background.mp3")
+                #srv['audio_player'].playFileFromPosition(file_path,120)
+
+                #srv['audio_player'].setVolume(file_id,0.3)
+
+
+        elif input_ret['type'] == 'speech' :
+            if input_ret['word'] == 'start'  :
+                next_scene = 'first_menu'
+                srv['tablet'].showWebview(get_html_address(next_scene))
+
+                return scene_data[next_scene]
+        
+
     if scene == 'first_menu' :
         if input_ret['type'] == 'touch' :
             if input_ret['touch_position'] == 'JESNK_SIDE' :
@@ -318,10 +343,15 @@ def transition(srv,scene,input_ret) :
                 # jesnk test
                 #file_id = srv['audio_player'].loadFile("/opt/aldebaran/www/apps/bi-sound/test.mp3")
                 #srv['audio_player'].setVolume(30)
-                srv['audio_player'].post.playFileFromPosition("/opt/aldebaran/www/apps/bi-sound/test.mp3",40)
+                #srv['audio_player'].playFileFromPosition("/opt/aldebaran/www/apps/bi-sound/test.mp3",40)
                 #srv['audio_player'].setVolume(DEFAULT_VOLUME)
 
+                file_path = "/opt/aldebaran/www/apps/bi-sound/background.mp3"
+                #srv['tts'].post.say('yes')
+                player = ALProxy("ALAudioPlayer",PEPPER_IP,9559)
+                player.post.playFileFromPosition(file_path,100)
                 entertain.elephant(srv)
+                player.post.stopAll()
                 pass
             if input_ret['touch_position'] == 'BUTTON_RIGHT' :
                 #Dance
@@ -388,11 +418,12 @@ def main(session) :
 
 
 
+PEPPER_IP = '192.168.1.125'
 if __name__ == "__main__":
 
     print("Hello")
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", type=str, default="192.168.1.123",
+    parser.add_argument("--ip", type=str, default= PEPPER_IP,
                         help="Robot IP address. On robot or Local Naoqi: use '192.168.1.123'.")
     parser.add_argument("--port", type=int, default=9559,
                         help="Naoqi port number")
@@ -407,4 +438,5 @@ if __name__ == "__main__":
         print ("Can't connect to Naoqi at ip \"" + args.ip + "\" on port " + str(args.port) +".\n"
                "Please check your script arguments. Run with -h option for help.")
         sys.exit(1)
+
     main(session)

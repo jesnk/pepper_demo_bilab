@@ -8,8 +8,11 @@ import subprocess
 import time
 import vision_definitions
 import touch
+import numpy as np
+import cv2
 from naoqi import ALProxy
 from threading import Thread
+import face_recognition
 
 sys.path.insert(0, './motion')
 import entertain
@@ -172,65 +175,6 @@ def transition(srv,scene,input_ret) :
     print("Trainsition mode")
     print(scene,input_ret)
 
-    if scene == 'init' :
-        if input_ret['type'] == 'touch' :
-            if input_ret['touch_position'] == 'RIGHT_SIDE' :
-                next_scene = '1'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
-
-                return scene_data['1']
-
-        elif input_ret['type'] == 'speech' :
-            if input_ret['word'] == '잘가' :
-
-                return scene_data['exit']
-
-            if input_ret['word'] == '다음' :
-                next_scene = '1'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-
-                return scene_data[next_scene]
-
-    if scene == '1' :
-        if input_ret['type'] == 'touch' :
-            if input_ret['touch_position'] == 'LEFT_SIDE' :
-                next_scene = 'init'
-
-                srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
-
-                return scene_data[next_scene]
-
-            if input_ret['touch_position'] == 'RIGHT_SIDE' :
-                next_scene = 'first_menu'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
-                return scene_data[next_scene]
-
-        elif input_ret['type'] == 'speech' :
-            if input_ret['word'] == '잘가' :
-
-                return scene_data['exit']
-
-            if input_ret['word'] == '처음' :
-                next_scene = 'init'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-
-                return scene_data[next_scene]
-
-            if input_ret['word'] == '다음' :
-                next_scene = 'first_menu'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-
-                return scene_data[next_scene]
-
-        elif input_ret['type'] == 'speech' :
-            if input_ret['word'] == '처음' :
-                next_scene = 'init'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-
-                return scene_data[next_scene]
 
     if scene == 'home' :
         if input_ret['type'] == 'touch' :
@@ -246,7 +190,6 @@ def transition(srv,scene,input_ret) :
             # jesnk : test
 
             if input_ret['touch_position'] == 'JESNK_SIDE' :
-
 
                 file_path = "/opt/aldebaran/www/apps/bi-sound/background.mp3"
                 #srv['tts'].post.say('yes')
@@ -273,12 +216,12 @@ def transition(srv,scene,input_ret) :
                 next_scene = 'first_menu'
 
                 srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("디버그")
+                srv['tts'].say("Touch Debug mode")
                 monitor_input.debug_mode = True
 
                 while monitor_input.debug_mode :
                     time.sleep(0.01)
-                srv['tts'].say("디버그 끝")
+                srv['tts'].say("Debug mode is ended")
 
                 return scene_data[next_scene]
 
@@ -299,11 +242,11 @@ def transition(srv,scene,input_ret) :
             if input_ret['touch_position'] == 'BUTTON_MIDDLE_DOWN' :
                 next_scene = 'home'
                 srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
+                srv['tts'].say("home page")
                 return scene_data[next_scene]
             if input_ret['touch_position'] == 'BUTTON_RIGHT_DOWN' :
                 next_scene = scene
-                srv['tts'].say("내가 누구게???")
+                srv['tts'].say("I'm pepper!! Hi???")
                 return scene_data[next_scene]
 
 
@@ -362,24 +305,202 @@ def transition(srv,scene,input_ret) :
     
 
 monitor_input = None
+SPEECH_VOLUME = 0.2
+
+
+
+def face_recognize(srv) :
+    #srv['tts'].say("Face recognition test")
+    #srv['tts'].say("I'll starting face scan after 2 seconds")
+    time.sleep(2)
+
+    face_dir_path = "/home/jesnk/pepper/img/face_test/"
+
+    srv['video'].unsubscribe('for_face')
+    rgb_top = srv['video'].subscribeCamera('for_face3',0,3,11,5) #name, idx, resolution,colorspace, fps
+    cams = []
+    cams.append(rgb_top)
+    file_no = 0
+
+    find_face_flag = False
+
+    while (not find_face_flag):
+	for cam in cams :
+	    msg = srv['video'].getImageRemote(cam)
+	    if msg is None :
+		print(cam, " not returned data")
+		continue
+	    w = msg[0]
+	    h = msg[1]
+	    c = msg[2]
+	    data = msg[6]
+	    ba = str(bytearray(data))
+
+	    nparr = np.fromstring(ba, np.uint8)
+	    img_np = nparr.reshape((h, w, c))
+	    img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
+
+	    #self.pio.vision.video.setResolution(self.pio.vision.rgb_top, 2)
+            #cv2.imshow('window',img_np)
+	    cv2.imwrite(face_dir_path+str(file_no) + ".jpg", img_np)
+            print(cam," ",file_no, " is saved")
+
+            picture_of_me = face_recognition.load_image_file(face_dir_path+str(file_no)+ ".jpg")
+            faces = face_recognition.face_encodings(picture_of_me)
+            if faces :
+                my_face_encoding = face_recognition.face_encodings(picture_of_me)
+                print("face detected")
+                find_face_flag = True
+            file_no +=1 
+    srv['tts'].say("face scaning is finished")
+
+    # my_face_encoding now contains a universal 'encoding' of my facial features that can be compared to any other picture of a face!
+    #
+    srv['tts'].say("face detecting begin")
+
+    frame_no = 0
+    while (True):
+	for cam in cams :
+	    msg = srv['video'].getImageRemote(cam)
+	    if msg is None :
+		print(cam, " not returned data")
+		continue
+	    w = msg[0]
+	    h = msg[1]
+	    c = msg[2]
+	    data = msg[6]
+	    ba = str(bytearray(data))
+
+	    nparr = np.fromstring(ba, np.uint8)
+	    img_np = nparr.reshape((h, w, c))
+	    img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
+
+	    #self.pio.vision.video.setResolution(self.pio.vision.rgb_top, 2)
+            #cv2.imshow('window',img_np)
+	    cv2.imwrite(face_dir_path+"tmp/1.jpg", img_np)
+
+            # We must do something with 'Path' 
+            unknown_picture = face_recognition.load_image_file(face_dir_path+"tmp/1.jpg")
+            unknown_face_encoding = face_recognition.face_encodings(unknown_picture)
+            if not unknown_face_encoding :
+                continue
+            unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
+
+            results = face_recognition.compare_faces([my_face_encoding], unknown_face_encoding)
+            print(results)
+            print(frame_no)
+            frame_no +=1
+            if results[0].all() == True:
+                srv['tts'].say("Yes!")
+                print("yes!")
+            else:
+                srv['tts'].say("No!")
+                print("no!")
+
+	    cv2.waitKey(1)
+
+    #
+    # # Now we can see the two face encodings are of the same person with `compare_faces`!
+    #
+    #
+        
+
+
+
+def cam_rgb_test(srv,camera_id = 0) :
+    srv['video'] = session.service("ALVideoDevice")
+
+# def get_rgb(self, resolution=None, save_path=None):
+    """return current RGB image from camera (top camera)"""
+
+    srv['video'].unsubscribe('jesnk_test')
+    rgb_top = srv['video'].subscribeCamera('jesn_test4',0,4,11,1) #name, idx, resolution,colorspace, fps
+    rgb_low = srv['video'].subscribeCamera('jesn_test5',1,4,11,1) #name, idx, resolution,colorspace, fps
+    depth = srv['video'].subscribeCamera('jesn_test3',2,4,11,1) #name, idx, resolution,colorspace, fps
+
+    cams = []
+    cams.append(rgb_top)
+    cams.append(rgb_low)
+    cams.append(depth)
+
+    #srv['video'].setResolution(rgb_top,4)
+    print(srv['video'].getCameraIndexes())
+    
+    cv2.namedWindow('window', cv2.WINDOW_AUTOSIZE)
+    
+    file_no = 200
+    while (True):
+	for cam in cams :
+	    msg = srv['video'].getImageRemote(cam)
+	    if msg is None :
+		print(cam, " not returned data")
+		continue
+	    w = msg[0]
+	    h = msg[1]
+	    c = msg[2]
+	    data = msg[6]
+	    ba = str(bytearray(data))
+
+	    nparr = np.fromstring(ba, np.uint8)
+	    img_np = nparr.reshape((h, w, c))
+	    img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
+
+	    #self.pio.vision.video.setResolution(self.pio.vision.rgb_top, 2)
+	    cv2.imshow('window',img_np)
+	    cv2.imwrite("/home/jesnk/img/"+str(cam)+"_"+str(file_no) + ".jpeg", img_np)
+	    print(cam," ",file_no, " is saved")
+	    file_no += 1
+	    cv2.waitKey(1)
+
+
+    return img_np
+
+
+
+
+
+
 
 def main(session) :
 # jesnk main 
     print("Hello")
     srv = {}
+
+    # Create services
     srv['tablet'] = session.service("ALTabletService")
     srv['memory'] = session.service("ALMemory")
     srv['motion'] = session.service("ALMotion")
     srv['asr'] = session.service("ALSpeechRecognition")
+
     srv['tts'] = session.service("ALTextToSpeech")
-    srv['tts'].setVolume(0.1)
+    srv['tts'].setVolume(SPEECH_VOLUME)
+    srv['tts'].setParameter("pitchShift", 1.4)
+    srv['tts'].setParameter("speed", 120)
     srv['tts'].setParameter("defaultVoiceSpeed",70)
+
     srv['audio_player'] = session.service("ALAudioPlayer")
+
+
+
+
+    #srv['tts'].say("Hello!")
 
     # Present Inital Page
     srv['tablet'].enableWifi()
     srv['tablet'].setOnTouchWebviewScaleFactor(1)
     srv['tablet'].showWebview('http://198.18.0.1/apps/bi-html/home.html')
+    srv['video'] = session.service("ALVideoDevice")
+
+# def get_rgb(self, resolution=None, save_path=None):
+    """return current RGB image from camera (top camera)"""
+    face_recognize(srv)
+    #cam_rgb_test(srv,1)
+
+
+
+
+    flag = False
+
     # Valid Input condition setting
     global monitor_input
     monitor_input = Monitor_input(srv)
@@ -391,7 +512,7 @@ def main(session) :
     monitor_input.set_target_touch_list(valid_touch_list)
     monitor_input.set_target_word_list(valid_word_list)
 
-    while (True) :
+    while (flag) :
         
 	input_ret = monitor_input.wait_for_get_input()
         ret = transition(srv,scene_name,input_ret)
@@ -418,7 +539,7 @@ def main(session) :
 
 
 
-PEPPER_IP = '192.168.1.125'
+PEPPER_IP = '192.168.1.123'
 if __name__ == "__main__":
 
     print("Hello")

@@ -52,6 +52,16 @@ scene_data['entertain'] = ['entertain', \
                             'BUTTON_LEFT_DOWN', 'BUTTON_MIDDLE_DOWN', 'BUTTON_RIGHT_DOWN'], \
                            ['잘가', '다음', '처음']]
 
+scene_data['hsr1'] = ['hsr1', \
+                           ['JESNK_SIDE', 'BUTTON_RIGHT', 'BUTTON_LEFT', \
+                            'BUTTON_LEFT_DOWN', 'BUTTON_MIDDLE_DOWN', 'BUTTON_RIGHT_DOWN'], \
+                           ['잘가', '다음', '처음']]
+
+scene_data['hsr2'] = ['hsr2', \
+                           ['JESNK_SIDE', 'BUTTON_RIGHT', 'BUTTON_LEFT', \
+                            'BUTTON_LEFT_DOWN', 'BUTTON_MIDDLE_DOWN', 'BUTTON_RIGHT_DOWN'], \
+                           ['잘가', '다음', '처음']]
+
 signalID = 0
 
 
@@ -301,11 +311,15 @@ def transition(srv, scene, input_ret):
     if scene == 'tour':
         if input_ret['type'] == 'touch':
             if input_ret['touch_position'] == 'BUTTON_RIGHT':
-                next_scene = 'home'
-                srv['tablet'].showWebview(get_html_address(next_scene))
+                next_scene = 'hsr1'
                 srv['tts'].setParameter("defaultVoiceSpeed", 110)
+                srv['tablet'].showWebview(get_html_address(next_scene))
                 srv['tts'].say("저희 연구실에 있는 로봇을 설명드리겠습니다. 먼저, 인간 도우미 로봇인 에이치에스알은, 이동형 조작 로봇입니다.")
+                next_scene = 'hsr2'
+                srv['tablet'].showWebview(get_html_address(next_scene))
+                srv['tts'].say("")
                 srv['tts'].setParameter("defaultVoiceSpeed", 70)
+                next_scene = 'home'
                 return scene_data[next_scene]
             if input_ret['touch_position'] == 'BUTTON_LEFT':
                 next_scene = 'home'

@@ -339,9 +339,18 @@ def transition(srv, scene, input_ret):
                 srv['tablet'].showWebview(get_html_address(next_scene))
                 return scene_data[next_scene]
             if input_ret['touch_position'] == 'BUTTON_LEFT':
-                next_scene = 'home'
+                next_scene = 'tour_ourlab1'
+                srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
+                srv['tts'].say("저희 연구실을 소개하겠습니다. 저희 바이오지능 연구실은 다음과 같은 연구들을 하고 있습니다. 먼저 베이비마인드, 브이티티 등, 인간 수준의 인공지능 개발을 위해, 인공지능, 심리학, 인지과학 등 다양한 분야와의 학제적 연구를 진행하고 있습니다. 또한 인간과 함께 활동하는 홈 로봇, 세계 로봇 대회인 로보컵 등, 다양한 플랫폼의 로봇 연구 또한 활발히 진행하고 있습니다.")
+
+                next_scene = 'tour_ourlab2'
+                srv['tablet'].showWebview(get_html_address(next_scene))
+                srv['tts'].say("그 밖에 궁금하신 부분 혹은, 문의사항이 있으시면, 다음의 홈페이지를 참고해 주시거나, 연락처로 문의해주시길 바랍니다.")
+
+                srv['tts'].setParameter("defaultVoiceSpeed", 70)
+                next_scene = 'tour'
+                srv['tablet'].showWebview(get_html_address(next_scene))
                 return scene_data[next_scene]
             if input_ret['touch_position'] == 'BUTTON_MIDDLE_DOWN':
                 next_scene = 'home'

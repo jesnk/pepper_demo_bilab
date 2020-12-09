@@ -310,14 +310,14 @@ SPEECH_VOLUME = 0.2
 
 
 def face_recognize(srv) :
-    #srv['tts'].say("Face recognition test")
+    srv['tts'].say("Face recognition test")
     #srv['tts'].say("I'll starting face scan after 2 seconds")
     time.sleep(2)
 
     face_dir_path = "/home/jesnk/pepper/img/face_test/"
 
     srv['video'].unsubscribe('for_face')
-    rgb_top = srv['video'].subscribeCamera('for_face3',0,3,11,5) #name, idx, resolution,colorspace, fps
+    rgb_top = srv['video'].subscribeCamera('for_face4',0,3,11,5) #name, idx, resolution,colorspace, fps
     cams = []
     cams.append(rgb_top)
     file_no = 0
@@ -383,19 +383,21 @@ def face_recognize(srv) :
             unknown_picture = face_recognition.load_image_file(face_dir_path+"tmp/1.jpg")
             unknown_face_encoding = face_recognition.face_encodings(unknown_picture)
             if not unknown_face_encoding :
+                print("Face not detected")
                 continue
             unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
+            print(len(my_face_encoding),len(unknown_face_encoding))
 
             results = face_recognition.compare_faces([my_face_encoding], unknown_face_encoding)
             print(results)
             print(frame_no)
             frame_no +=1
-            if results[0].all() == True:
-                srv['tts'].say("Yes!")
-                print("yes!")
-            else:
-                srv['tts'].say("No!")
-                print("no!")
+            for i in results[0] :
+                if i == False:
+                    srv['tts'].say("No!")
+
+            srv['tts'].say("Yes!")
+
 
 	    cv2.waitKey(1)
 

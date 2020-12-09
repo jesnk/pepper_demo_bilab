@@ -14,6 +14,7 @@ from threading import Thread
 sys.path.insert(0, './motion')
 import entertain
 
+
 FRAME_WIDTH = 1280
 FRAME_HEIGHT = 800
 DEFAULT_VOLUME = 60
@@ -36,7 +37,7 @@ scene_data['init'] = ['init', ['RIGHT_SIDE', 'LEFT_SIDE'], ['잘가', '다음', 
 scene_data['1'] = ['1', ['RIGHT_SIDE', 'LEFT_SIDE'], ['잘가', '다음', '처음']]
 scene_data['exit'] = ['exit', [], []]
 
-scene_data['home'] = ['home', ['BUTTON_MIDDLE_DOWN', 'JESNK_SIDE'], ['start', 'hi', 'pepper']]
+scene_data['home'] = ['home', ['BUTTON_MIDDLE_DOWN', 'JESNK_SIDE'], ['시작', '안녕', '페퍼']]
 
 scene_data['first_menu'] = ['first_menu', \
                             ['JESNK_SIDE', 'BUTTON_RIGHT', 'BUTTON_LEFT', \
@@ -74,6 +75,7 @@ class Monitor_input:
     def __init__(self, srv, touch_list=[], word_list=[]):
         self.target_touch_list = touch_list
         self.target_word_list = word_list
+        self.srv = srv
         self.tabletService = srv['tablet']
         self.signalID = srv['tablet'].onTouchDown.connect(self.touch_callback)
         self.touched_position = None
@@ -82,7 +84,7 @@ class Monitor_input:
         self.memory = srv['memory']
         self.asr = srv['asr']
         self.asr.pause(True)
-        self.asr.setLanguage("English")
+        self.asr.setLanguage("Korean")
         # self.asr.setLanguage("English")
 
         self.debug_mode = False
@@ -135,7 +137,7 @@ class Monitor_input:
 
     def asr_callback(self, msg):
         # Threshold
-        print(msg[0], " is recognized. ", msg[1])
+        print(msg[0], ' is recognized. ', msg[1])
         if msg[1] > 0.5:
             print(msg[0], msg[1], " is returned")
             self.ret['type'] = 'speech'
@@ -144,6 +146,8 @@ class Monitor_input:
 
     def wait_for_get_input(self):
         self.asr.setVocabulary(self.target_word_list, False)
+        print("Staring wait")
+        self.srv['audio_device'].setOutputVolume(10)
         self.asr.subscribe('asr')
         asr_mem_sub = self.memory.subscriber("WordRecognized")
         asr_mem_sub.signal.connect(self.asr_callback)
@@ -151,6 +155,7 @@ class Monitor_input:
             time.sleep(0.01)
 
         self.asr.unsubscribe('asr')
+        self.srv['audio_device'].setOutputVolume(100)
         self.exit_flag = False
         return self.ret
 
@@ -178,64 +183,6 @@ def transition(srv, scene, input_ret):
     print("Trainsition mode")
     print(scene, input_ret)
 
-    if scene == 'init':
-        if input_ret['type'] == 'touch':
-            if input_ret['touch_position'] == 'RIGHT_SIDE':
-                next_scene = '1'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
-
-                return scene_data['1']
-
-        elif input_ret['type'] == 'speech':
-            if input_ret['word'] == '잘가':
-                return scene_data['exit']
-
-            if input_ret['word'] == '다음':
-                next_scene = '1'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-
-                return scene_data[next_scene]
-
-    if scene == '1':
-        if input_ret['type'] == 'touch':
-            if input_ret['touch_position'] == 'LEFT_SIDE':
-                next_scene = 'init'
-
-                srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
-
-                return scene_data[next_scene]
-
-            if input_ret['touch_position'] == 'RIGHT_SIDE':
-                next_scene = 'first_menu'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
-                return scene_data[next_scene]
-
-        elif input_ret['type'] == 'speech':
-            if input_ret['word'] == '잘가':
-                return scene_data['exit']
-
-            if input_ret['word'] == '처음':
-                next_scene = 'init'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-
-                return scene_data[next_scene]
-
-            if input_ret['word'] == '다음':
-                next_scene = 'first_menu'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-
-                return scene_data[next_scene]
-
-        elif input_ret['type'] == 'speech':
-            if input_ret['word'] == '처음':
-                next_scene = 'init'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-
-                return scene_data[next_scene]
-
     if scene == 'home':
         if input_ret['type'] == 'touch':
             if input_ret['touch_position'] == 'BUTTON_MIDDLE_DOWN':
@@ -261,10 +208,20 @@ def transition(srv, scene, input_ret):
 
 
         elif input_ret['type'] == 'speech':
-            if input_ret['word'] == 'start':
+            if input_ret['word'] == '시작':
                 next_scene = 'first_menu'
+                srv['aas'].say("안녕하세요! 반갑습니다",aas_configuration)
                 srv['tablet'].showWebview(get_html_address(next_scene))
 
+                return scene_data[next_scene]
+            if input_ret['word'] == '안녕':
+                next_scene = 'home'
+                srv['aas'].say("안녕하세요!",aas_configuration)
+                return scene_data[next_scene]
+
+            if input_ret['word'] == '페퍼':
+                next_scene = 'home'
+                srv['aas'].say("네! 안녕하세요!",aas_configuration)
                 return scene_data[next_scene]
 
     if scene == 'first_menu':
@@ -299,14 +256,30 @@ def transition(srv, scene, input_ret):
             if input_ret['touch_position'] == 'BUTTON_MIDDLE_DOWN':
                 next_scene = 'home'
                 srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
+                srv['aas'].say("다음")
                 return scene_data[next_scene]
             if input_ret['touch_position'] == 'BUTTON_RIGHT_DOWN':
                 next_scene = scene
                 srv['tts'].setParameter("defaultVoiceSpeed", 100)
-                srv['tts'].say("제가 궁금하신가요? 저는 페퍼입니다. 소프트뱅크사에서 만들어진 휴머노이드 로봇으로, 인공지능을 사용할 수 있습니다. 귀여운 외모가 특징이며, 우리나라에선 금융, 서점, 의료, 유통 등 다양한 분야에 도입되어 있습니다.")
+                srv['aas'].say("제가 궁금하신가요? 저는 페퍼입니다. 소프트뱅크사에서 만들어진 휴머노이드 로봇으로, 인공지능을 사용할 수 있습니다. 귀여운 외모가 특징이며, 우리나라에선 금융, 서점, 의료, 유통 등 다양한 분야에 도입되어 있습니다.")
                 srv['tts'].setParameter("defaultVoiceSpeed", 70)
                 return scene_data[next_scene]
+        elif input_ret['type'] == 'speech':
+            if input_ret['word'] == '잘가':
+                return scene_data['exit']
+
+            if input_ret['word'] == '처음':
+                next_scene = 'home'
+                srv['tablet'].showWebview(get_html_address(next_scene))
+                return scene_data[next_scene]
+
+            if input_ret['word'] == '누구야':
+                next_scene = 'first_menu'
+                srv['tablet'].showWebview(get_html_address(next_scene))
+
+                return scene_data[next_scene]
+
+
 
     if scene == 'tour':
         if input_ret['type'] == 'touch':
@@ -314,39 +287,48 @@ def transition(srv, scene, input_ret):
                 next_scene = 'tour_hsr1'
                 srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("저희 연구실에 있는 로봇을 설명드리겠습니다. 먼저, 인간 도우미 로봇인 에이치에스알은, 이동형 조작 로봇입니다.")
+                srv['aas'].say("저희 연구실에 있는 로봇을 설명드리겠습니다. 먼저, 인간 도우미 로봇인 에이치에스알은, 이동형 조작 로봇입니다.",aas_configuration)
 
                 next_scene = 'tour_hsr2'
                 srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("키는 약 1미터 이며, 다양한 카메라를 통해 물체를 인식하고, 그리퍼로 집는 것이 가능한, 만능 로봇입니다. 하지만 저보단 못생겼죠?")
+                srv['aas'].say("키는 약 1미터 이며, 다양한 카메라를 통해 물체를 인식하고, 그리퍼로 집는 것이 가능한, 만능 로봇입니다. 하지만 저보단 못생겼죠?",aas_configuration)
 
                 next_scene = 'tour_blitz'
                 srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음 로봇은, 블리츠 입니다. 물체를 옮기는데 특화된, 베이스 로봇과, 물체를 집는, 유알 파이브 로봇을 합쳐 만들어진 로봇입니다. 그외에 소리, 카메라 센서들을 탑재하여, 물체를 인식해 그리퍼로 집는 것이 가능한, 이동형 조작 로봇입니다.")
+                srv['aas'].say("다음 로봇은, 블리츠 입니다. 물체를 옮기는데 특화된, 베이스 로봇과, 물체를 집는, 유알 파이브 로봇을 합쳐 만들어진 로봇입니다. 그외에 소리, 카메라 센서들을 탑재하여, 물체를 인식해 그리퍼로 집는 것이 가능한, 이동형 조작 로봇입니다.",aas_configuration)
 
                 next_scene = 'tour_pepper1'
                 srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say(
-                    "마지막으로 소개할 로봇은 저, 페퍼 입니다. 저는 소프트뱅크사에서 만들어진 휴머노이드 로봇으로, 인공지능을 사용할 수 있습니다.")
+                srv['aas'].say(
+                    "마지막으로 소개할 로봇은 저, 페퍼 입니다. 저는 소프트뱅크사에서 만들어진 휴머노이드 로봇으로, 인공지능을 사용할 수 있습니다.",aas_configuration)
 
                 next_scene = 'tour_pepper2'
                 srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say(
-                    "귀여운 외모가 특징이며, 우리나라에선 금융, 서점, 의료, 유통 등 다양한 분야에 도입되어 있습니다. 뿐만 아니라 세계 로봇 대회인 로보컵 리그 중, 에스,에스,피,엘에서, 표준로봇으로 사용되고 있습니다.")
+                srv['aas'].say(
+                    "귀여운 외모가 특징이며, 우리나라에선 금융, 서점, 의료, 유통 등 다양한 분야에 도입되어 있습니다. 뿐만 아니라 세계 로봇 대회인 로보컵 리그 중, 에스,에스,피,엘에서, 표준로봇으로 사용되고 있습니다.",aas_configuration)
 
                 srv['tts'].setParameter("defaultVoiceSpeed", 70)
                 next_scene = 'tour'
                 srv['tablet'].showWebview(get_html_address(next_scene))
                 return scene_data[next_scene]
             if input_ret['touch_position'] == 'BUTTON_LEFT':
-                next_scene = 'home'
+                next_scene = 'tour_ourlab1'
+                srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
+                srv['aas'].say("저희 연구실을 소개하겠습니다. 저희 바이오지능 연구실은 다음과 같은 연구들을 하고 있습니다. 먼저 베이비마인드, 브이티티 등, 인간 수준의 인공지능 개발을 위해, 인공지능, 심리학, 인지과학 등 다양한 분야와의 학제적 연구를 진행하고 있습니다. 또한 인간과 함께 활동하는 홈 로봇, 세계 로봇 대회인 로보컵 등, 다양한 플랫폼의 로봇 연구 또한 활발히 진행하고 있습니다.",aas_configuration)
+
+                next_scene = 'tour_ourlab2'
+                srv['tablet'].showWebview(get_html_address(next_scene))
+                srv['aas'].say("그 밖에 궁금하신 부분 혹은, 문의사항이 있으시면, 다음의 홈페이지를 참고해 주시거나, 연락처로 문의해주시길 바랍니다.",aas_configuration)
+
+                srv['tts'].setParameter("defaultVoiceSpeed", 70)
+                next_scene = 'tour'
+                srv['tablet'].showWebview(get_html_address(next_scene))
                 return scene_data[next_scene]
             if input_ret['touch_position'] == 'BUTTON_MIDDLE_DOWN':
                 next_scene = 'home'
                 srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("처음으로")
+                srv['aas'].say("처음으로",aas_configuration)
                 return scene_data[next_scene]
             if input_ret['touch_position'] == 'BUTTON_LEFT_DOWN':
                 next_scene = 'first_menu'
@@ -356,7 +338,7 @@ def transition(srv, scene, input_ret):
             if input_ret['touch_position'] == 'BUTTON_RIGHT_DOWN':
                 next_scene = scene
                 srv['tts'].setParameter("defaultVoiceSpeed", 110)
-                srv['tts'].say("제가 궁금하신가요? 저는 페퍼입니다. 소프트뱅크사에서 만들어진 휴머노이드 로봇으로, 인공지능을 사용할 수 있습니다. 귀여운 외모가 특징이며, 우리나라에선 금융, 서점, 의료, 유통 등 다양한 분야에 도입되어 있습니다.")
+                srv['aas'].say("제가 궁금하신가요? 저는 페퍼입니다. 소프트뱅크사에서 만들어진 휴머노이드 로봇으로, 인공지능을 사용할 수 있습니다. 귀여운 외모가 특징이며, 우리나라에선 금융, 서점, 의료, 유통 등 다양한 분야에 도입되어 있습니다.",aas_configuration)
                 srv['tts'].setParameter("defaultVoiceSpeed", 70)
                 return scene_data[next_scene]
 
@@ -388,7 +370,7 @@ def transition(srv, scene, input_ret):
             if input_ret['touch_position'] == 'BUTTON_RIGHT_DOWN':
                 next_scene = scene
                 srv['tts'].setParameter("defaultVoiceSpeed", 110)
-                srv['tts'].say("제가 궁금하신가요? 저는 페퍼입니다. 소프트뱅크사에서 만들어진 휴머노이드 로봇으로, 인공지능을 사용할 수 있습니다. 귀여운 외모가 특징이며, 우리나라에선 금융, 서점, 의료, 유통 등 다양한 분야에 도입되어 있습니다.")
+                srv['aas'].say("제가 궁금하신가요? 저는 페퍼입니다. 소프트뱅크사에서 만들어진 휴머노이드 로봇으로, 인공지능을 사용할 수 있습니다. 귀여운 외모가 특징이며, 우리나라에선 금융, 서점, 의료, 유통 등 다양한 분야에 도입되어 있습니다.",aas_configuration)
                 srv['tts'].setParameter("defaultVoiceSpeed", 70)
                 return scene_data[next_scene]
 
@@ -399,6 +381,8 @@ def transition(srv, scene, input_ret):
 monitor_input = None
 
 
+aas_configuration = {"bodyLanguageMode":"contextual"}
+
 def main(session):
     # jesnk main
     print("Hello")
@@ -408,8 +392,12 @@ def main(session):
     srv['motion'] = session.service("ALMotion")
     srv['asr'] = session.service("ALSpeechRecognition")
     srv['tts'] = session.service("ALTextToSpeech")
-    srv['tts'].setVolume(0.1)
-    srv['tts'].setParameter("defaultVoiceSpeed", 70)
+    srv['aas'] = session.service("ALAnimatedSpeech")
+    srv['audio_device'] = session.service("ALAudioDevice")
+
+
+    #srv['tts'].setVolume(0.1)
+    #srv['tts'].setParameter("defaultVoiceSpeed", 70)
     srv['audio_player'] = session.service("ALAudioPlayer")
 
     # Present Inital Page
@@ -463,7 +451,7 @@ if __name__ == "__main__":
     session = qi.Session()
     print("Hello")
     try:
-        session.connect("tcp://" + args.ip + ":" + str(args.port))
+        session.connect("tcp://" + PEPPER_IP + ":" + str(args.port))
     except RuntimeError:
         print ("Can't connect to Naoqi at ip \"" + args.ip + "\" on port " + str(args.port) + ".\n"
                                                                                               "Please check your script arguments. Run with -h option for help.")

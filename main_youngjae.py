@@ -320,6 +320,20 @@ def transition(srv, scene, input_ret):
                 srv['tablet'].showWebview(get_html_address(next_scene))
                 srv['tts'].say("키는 약 1미터 이며, 다양한 카메라를 통해 물체를 인식하고, 그리퍼로 집는 것이 가능한, 만능 로봇입니다. 하지만 저보단 못생겼죠?")
 
+                next_scene = 'tour_blitz'
+                srv['tablet'].showWebview(get_html_address(next_scene))
+                srv['tts'].say("다음 로봇은, 블리츠 입니다. 물체를 옮기는데 특화된, 베이스 로봇과, 물체를 집는, 유알 파이브 로봇을 합쳐 만들어진 로봇입니다. 그외에 소리, 카메라 센서들을 탑재하여, 물체를 인식해 그리퍼로 집는 것이 가능한, 이동형 조작 로봇입니다.")
+
+                next_scene = 'tour_pepper1'
+                srv['tablet'].showWebview(get_html_address(next_scene))
+                srv['tts'].say(
+                    "마지막으로 소개할 로봇은 저, 페퍼 입니다. 저는 소프트뱅크사에서 만들어진 휴머노이드 로봇으로, 인공지능을 사용할 수 있습니다.")
+
+                next_scene = 'tour_pepper2'
+                srv['tablet'].showWebview(get_html_address(next_scene))
+                srv['tts'].say(
+                    "귀여운 외모가 특징이며, 우리나라에선 금융, 서점, 의료, 유통 등 다양한 분야에 도입되어 있습니다. 뿐만 아니라 세계 로봇 대회인 로보컵 리그 중, 에스,에스,피,엘에서, 표준로봇으로 사용되고 있습니다.")
+
                 srv['tts'].setParameter("defaultVoiceSpeed", 70)
                 next_scene = 'tour'
                 srv['tablet'].showWebview(get_html_address(next_scene))

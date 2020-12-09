@@ -172,66 +172,6 @@ def transition(srv,scene,input_ret) :
     print("Trainsition mode")
     print(scene,input_ret)
 
-    if scene == 'init' :
-        if input_ret['type'] == 'touch' :
-            if input_ret['touch_position'] == 'RIGHT_SIDE' :
-                next_scene = '1'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
-
-                return scene_data['1']
-
-        elif input_ret['type'] == 'speech' :
-            if input_ret['word'] == '잘가' :
-
-                return scene_data['exit']
-
-            if input_ret['word'] == '다음' :
-                next_scene = '1'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-
-                return scene_data[next_scene]
-
-    if scene == '1' :
-        if input_ret['type'] == 'touch' :
-            if input_ret['touch_position'] == 'LEFT_SIDE' :
-                next_scene = 'init'
-
-                srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
-
-                return scene_data[next_scene]
-
-            if input_ret['touch_position'] == 'RIGHT_SIDE' :
-                next_scene = 'first_menu'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("다음")
-                return scene_data[next_scene]
-
-        elif input_ret['type'] == 'speech' :
-            if input_ret['word'] == '잘가' :
-
-                return scene_data['exit']
-
-            if input_ret['word'] == '처음' :
-                next_scene = 'init'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-
-                return scene_data[next_scene]
-
-            if input_ret['word'] == '다음' :
-                next_scene = 'first_menu'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-
-                return scene_data[next_scene]
-
-        elif input_ret['type'] == 'speech' :
-            if input_ret['word'] == '처음' :
-                next_scene = 'init'
-                srv['tablet'].showWebview(get_html_address(next_scene))
-
-                return scene_data[next_scene]
-
     if scene == 'home' :
         if input_ret['type'] == 'touch' :
             if input_ret['touch_position'] == 'BUTTON_MIDDLE_DOWN' :
@@ -418,7 +358,7 @@ def main(session) :
 
 
 
-PEPPER_IP = '192.168.1.125'
+PEPPER_IP = '192.168.1.123'
 if __name__ == "__main__":
 
     print("Hello")

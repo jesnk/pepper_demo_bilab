@@ -155,7 +155,7 @@ class Monitor_input:
             time.sleep(0.01)
 
         self.asr.unsubscribe('asr')
-        self.srv['audio_device'].setOutputVolume(100)
+        self.srv['audio_device'].setOutputVolume(70)
         self.exit_flag = False
         return self.ret
 
@@ -357,15 +357,19 @@ def transition(srv, scene, input_ret):
                 return scene_data[next_scene]
 
             if input_ret['touch_position'] == 'BUTTON_LEFT':
-                file_path = "/opt/aldebaran/www/apps/bi-sound/background.mp3"
+                file_path = "/opt/aldebaran/www/apps/bi-sound/elephant.ogg"
                 # srv['tts'].post.say('yes')
                 player = ALProxy("ALAudioPlayer", PEPPER_IP, 9559)
-                player.post.playFileFromPosition(file_path, 100)
+                player.post.playFileFromPosition(file_path, 0)
                 entertain.elephant(srv)
                 player.post.stopAll()
                 pass
             if input_ret['touch_position'] == 'BUTTON_RIGHT':
-                # Dance
+                file_path = "/opt/aldebaran/www/apps/bi-sound/UrbanStreet.mp3"
+                player = ALProxy("ALAudioPlayer", PEPPER_IP, 9559)
+                player.post.playFileFromPosition(file_path,0)
+                entertain.disco(srv)
+                player.post.stopAll()
                 pass
             if input_ret['touch_position'] == 'BUTTON_RIGHT_DOWN':
                 next_scene = scene

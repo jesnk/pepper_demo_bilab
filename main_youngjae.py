@@ -52,12 +52,12 @@ scene_data['entertain'] = ['entertain', \
                             'BUTTON_LEFT_DOWN', 'BUTTON_MIDDLE_DOWN', 'BUTTON_RIGHT_DOWN'], \
                            ['잘가', '다음', '처음']]
 
-scene_data['hsr1'] = ['hsr1', \
+scene_data['tour_hsr1'] = ['tour_hsr1', \
                            ['JESNK_SIDE', 'BUTTON_RIGHT', 'BUTTON_LEFT', \
                             'BUTTON_LEFT_DOWN', 'BUTTON_MIDDLE_DOWN', 'BUTTON_RIGHT_DOWN'], \
                            ['잘가', '다음', '처음']]
 
-scene_data['hsr2'] = ['hsr2', \
+scene_data['tour_hsr2'] = ['tour_hsr2', \
                            ['JESNK_SIDE', 'BUTTON_RIGHT', 'BUTTON_LEFT', \
                             'BUTTON_LEFT_DOWN', 'BUTTON_MIDDLE_DOWN', 'BUTTON_RIGHT_DOWN'], \
                            ['잘가', '다음', '처음']]
@@ -303,7 +303,7 @@ def transition(srv, scene, input_ret):
                 return scene_data[next_scene]
             if input_ret['touch_position'] == 'BUTTON_RIGHT_DOWN':
                 next_scene = scene
-                srv['tts'].setParameter("defaultVoiceSpeed", 110)
+                srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 srv['tts'].say("제가 궁금하신가요? 저는 페퍼입니다. 소프트뱅크사에서 만들어진 휴머노이드 로봇으로, 인공지능을 사용할 수 있습니다. 귀여운 외모가 특징이며, 우리나라에선 금융, 서점, 의료, 유통 등 다양한 분야에 도입되어 있습니다.")
                 srv['tts'].setParameter("defaultVoiceSpeed", 70)
                 return scene_data[next_scene]
@@ -311,15 +311,18 @@ def transition(srv, scene, input_ret):
     if scene == 'tour':
         if input_ret['type'] == 'touch':
             if input_ret['touch_position'] == 'BUTTON_RIGHT':
-                next_scene = 'hsr1'
-                srv['tts'].setParameter("defaultVoiceSpeed", 110)
+                next_scene = 'tour_hsr1'
+                srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 srv['tablet'].showWebview(get_html_address(next_scene))
                 srv['tts'].say("저희 연구실에 있는 로봇을 설명드리겠습니다. 먼저, 인간 도우미 로봇인 에이치에스알은, 이동형 조작 로봇입니다.")
-                next_scene = 'hsr2'
+
+                next_scene = 'tour_hsr2'
                 srv['tablet'].showWebview(get_html_address(next_scene))
-                srv['tts'].say("")
+                srv['tts'].say("키는 약 1미터 이며, 다양한 카메라를 통해 물체를 인식하고, 그리퍼로 집는 것이 가능한, 만능 로봇입니다. 하지만 저보단 못생겼죠?")
+
                 srv['tts'].setParameter("defaultVoiceSpeed", 70)
-                next_scene = 'home'
+                next_scene = 'tour'
+                srv['tablet'].showWebview(get_html_address(next_scene))
                 return scene_data[next_scene]
             if input_ret['touch_position'] == 'BUTTON_LEFT':
                 next_scene = 'home'

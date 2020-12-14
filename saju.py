@@ -25,7 +25,7 @@ class saju(object):
 
 def calculate(value):
     print("calculate:", value)
-    # value가 예 '1998 December 10th Female' 이라고 가정하면
+    # value가 '1998 December 10th Female' 이라고 가정하면
     rem = value.translate({ord(i): None for i in 'th'})
     sent = rem.split()
 

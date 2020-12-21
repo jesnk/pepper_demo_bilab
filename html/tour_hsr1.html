@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=1280, user-scalable=no" />
-    <title>Home</title>
+    <title>Entertain</title>
     <style>
         html{
             width : 100%;
@@ -17,28 +17,32 @@
         .wrapper{
             padding : 40px;
             height : 90%;
-
         }
         .border{
             border: black 3px solid;
             height : 100%;
+
         }
-        .lab-title{
-            font-size : 80px;
-            font-weight: 700;
+
+        .img_wrapper{
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 10px;
+            justify-content: center;
+
+        }
+
+        .button_wrapper{
+
+            align-items: center;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-        }
-        .start{
-            font-size: 40px;
             font-weight: 700;
-            display: flex;
-            justify-content: center;
-            bottom: 100px;
-            position: relative;
+            font-size: 50px;
+
+        }
+        .hsr_human_img{
             width: 100%;
         }
         .craig{
@@ -49,13 +53,11 @@
 <body>
 <div class="wrapper">
     <div class="border">
-
-        <div class="lab-title">
-            <div>Seoul National University</div>
-            <div>Biointelligence Lab</div>
+        <div class="img_wrapper">
+            <img class="hsr_human_img" src="src/hsr_human.png">
         </div>
-        <div class="start">
-            <div>START</div>
+        <div class="button_wrapper">
+            Human Support Robot (HSR)
         </div>
     </div>
     <div class="craig">

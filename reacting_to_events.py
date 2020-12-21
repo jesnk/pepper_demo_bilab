@@ -14,13 +14,13 @@ class HumanGreeter(object):
     A simple class to react to face detection events.
     """
 
-    def __init__(self, app):
+    def __init__(self, session):
         """
         Initialisation of qi framework and event detection.
         """
         super(HumanGreeter, self).__init__()
-        app.start()
-        session = app.session
+        # app.start()
+        # session = app.session
         # Get the service ALMemory.
         self.memory = session.service("ALMemory")
         # Connect the event callback.
@@ -41,7 +41,7 @@ class HumanGreeter(object):
         elif not self.got_face:  # only speak the first time a face appears
             self.got_face = True
             print "I saw a face!"
-            self.tts.say("Hello, you!")
+            # self.tts.say("Hello, you!")
             # First Field = TimeStamp.
             timeStamp = value[0]
             print "TimeStamp is: " + str(timeStamp)
@@ -59,7 +59,7 @@ class HumanGreeter(object):
 
                 print "Face Infos :  alpha %.3f - beta %.3f" % (faceShapeInfo[1], faceShapeInfo[2])
                 print "Face Infos :  width %.3f - height %.3f" % (faceShapeInfo[3], faceShapeInfo[4])
-                print "Face Extra Infos :" + str(faceExtraInfo)
+                # print "Face Extra Infos :" + str(faceExtraInfo)
 
     def run(self):
         """
@@ -76,22 +76,22 @@ class HumanGreeter(object):
             sys.exit(0)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", type=str, default="127.0.0.1",
-                        help="Robot IP address. On robot or Local Naoqi: use '127.0.0.1'.")
-    parser.add_argument("--port", type=int, default=9559,
-                        help="Naoqi port number")
-
-    args = parser.parse_args()
-    try:
-        # Initialize qi framework.
-        connection_url = "tcp://" + args.ip + ":" + str(args.port)
-        app = qi.Application(["HumanGreeter", "--qi-url=" + connection_url])
-    except RuntimeError:
-        print ("Can't connect to Naoqi at ip \"" + args.ip + "\" on port " + str(args.port) +".\n"
-               "Please check your script arguments. Run with -h option for help.")
-        sys.exit(1)
-
-    human_greeter = HumanGreeter(app)
-    human_greeter.run()
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument("--ip", type=str, default="127.0.0.1",
+#                         help="Robot IP address. On robot or Local Naoqi: use '127.0.0.1'.")
+#     parser.add_argument("--port", type=int, default=9559,
+#                         help="Naoqi port number")
+#
+#     args = parser.parse_args()
+#     try:
+#         # Initialize qi framework.
+#         connection_url = "tcp://" + args.ip + ":" + str(args.port)
+#         app = qi.Application(["HumanGreeter", "--qi-url=" + connection_url])
+#     except RuntimeError:
+#         print ("Can't connect to Naoqi at ip \"" + args.ip + "\" on port " + str(args.port) +".\n"
+#                "Please check your script arguments. Run with -h option for help.")
+#         sys.exit(1)
+#
+#     human_greeter = HumanGreeter(app)
+#     human_greeter.run()

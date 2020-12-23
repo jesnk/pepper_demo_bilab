@@ -403,10 +403,9 @@ def transition(srv, scene, input_ret):
 
             if input_ret['touch_position'] == 'BUTTON_LEFT':
                 srv['aas'].say("생년월일을 영어로 말씀해주세요.", aas_configuration)
-                saju.main(srv)
-                pass
+                text = saju.main(srv)
+                srv['ass'].say(text, aas_configuration)
             if input_ret['touch_position'] == 'BUTTON_RIGHT':
-
                 pass
 
             if input_ret['touch_position'] == 'BUTTON_RIGHT_DOWN':

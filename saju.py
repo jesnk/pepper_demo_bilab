@@ -88,4 +88,6 @@ def main(srv):
     req = requests.get(url, headers=headers)
     soup = BeautifulSoup(req.text, 'html.parser')
     my_titles = soup.select('.box_1111')
-    print(my_titles[0].text)
+    response = my_titles[0].text
+    print(response)
+    return response

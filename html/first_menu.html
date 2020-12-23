@@ -126,10 +126,41 @@
             width: 30%;
             text-align: center;
         }
-        .craig{
+        .craig {
             text-align: end;
         }
+        .flex-container {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .row {
+            width: auto;
+            margin: auto 30px;
+            border: 2px solid #ccc;
+            border-radius: 15px;
+            background: #ffffff
+        }
+        .flex-item {
+            padding: 5px;
+            margin: 15px;
+            line-height: 50px;
+            color: rgb(34, 33, 33);
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            font-size: 3em;
+            text-align: left;
+        }
     </style>
+    <script src="/libs/qimessaging/2/qimessaging.js"></script>
+	<script src="js/typed.min.js"></script>
+	<script src="js/script.js"></script>
 </head>
 <body>
 <div class="wrapper">
@@ -138,7 +169,15 @@
             <div class="voice_wrapper">
                 <img class="voice_mark" src="src/voice.png">
             </div>
-            <div class="voice_shower"></div>
+            <div class="voice_shower">
+                <div class="flex-container">
+                    <div class="row">
+                        <div class="flex-item">
+                            <span id="typed"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="snu_wrapper">
                 <img class="snu_mark" src="src/bilab-logo.PNG">
             </div>

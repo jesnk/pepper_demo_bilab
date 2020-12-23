@@ -11,7 +11,7 @@ class saju(object):
     def __init__(self, srv):
         self.tts = srv['tts']
         self.asr = srv['asr']
-        srv['asr'].setLanguage("Korean")
+        srv['asr'].setLanguage("English")
         self.exit_flag = False
 
     def asr_callback(self, msg):

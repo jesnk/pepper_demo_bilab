@@ -37,7 +37,7 @@ scene_data['init'] = ['init', ['RIGHT_SIDE', 'LEFT_SIDE'], ['bye', 'next', 'firs
 scene_data['1'] = ['1', ['RIGHT_SIDE', 'LEFT_SIDE'], ['bye', 'next', 'first']]
 scene_data['exit'] = ['exit', [], []]
 
-scene_data['home'] = ['home', ['BUTTON_MIDDLE_DOWN', 'JESNK_SIDE'], ['start', 'next', '페퍼']]
+scene_data['home'] = ['home', ['BUTTON_MIDDLE_DOWN', 'JESNK_SIDE'], ['start', 'next', 'pepper']]
 
 scene_data['first_menu'] = ['first_menu', \
                             ['JESNK_SIDE', 'BUTTON_RIGHT', 'BUTTON_LEFT', \

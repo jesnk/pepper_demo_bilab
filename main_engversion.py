@@ -435,8 +435,8 @@ def main(session):
     srv['aas'] = session.service("ALAnimatedSpeech")
     srv['audio_device'] = session.service("ALAudioDevice")
 
-    # srv['tts'].setVolume(0.1)
-    # srv['tts'].setParameter("defaultVoiceSpeed", 70)
+    srv['tts'].setVolume(0.1)
+    srv['tts'].setParameter("defaultVoiceSpeed", 70)
     srv['audio_player'] = session.service("ALAudioPlayer")
 
     # Present Inital Page
@@ -475,13 +475,13 @@ def main(session):
     print("Finished")
 
 
-PEPPER_IP = '192.168.1.123'
+PEPPER_IP = '192.168.1.188'
 if __name__ == "__main__":
 
     print("Hello")
     parser = argparse.ArgumentParser()
     parser.add_argument("--ip", type=str, default=PEPPER_IP,
-                        help="Robot IP address. On robot or Local Naoqi: use '192.168.1.123'.")
+                        help="Robot IP address. On robot or Local Naoqi: use '192.168.1.188'.")
     parser.add_argument("--port", type=int, default=9559,
                         help="Naoqi port number")
     print("Hello")
@@ -491,6 +491,7 @@ if __name__ == "__main__":
     print("Hello")
     try:
         session.connect("tcp://" + PEPPER_IP + ":" + str(args.port))
+	print("connection complete")
     except RuntimeError:
         print ("Can't connect to Naoqi at ip \"" + args.ip + "\" on port " + str(args.port) + ".\n"
                                                                                               "Please check your script arguments. Run with -h option for help.")

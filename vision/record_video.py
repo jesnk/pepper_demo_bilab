@@ -17,8 +17,8 @@ except Exception, e:
 
 videoRecorderProxy.setFrameRate(10.0)
 videoRecorderProxy.setResolution(2) # Set resolution to VGA (640 x 480)
-# We'll save a 5 second video record in /home/nao/recordings/cameras/
-videoRecorderProxy.startRecording("./", "test")
+# We'll save a 5 second video record in pepper internal storage [/home/nao/recordings/cameras/]
+videoRecorderProxy.startRecording("/home/nao/recordings/cameras", "test")
 print "Video record started."
 
 time.sleep(5)

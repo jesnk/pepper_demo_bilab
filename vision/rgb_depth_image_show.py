@@ -6,14 +6,13 @@ from naoqi import ALProxy
 from PIL import Image
 
 
-
-
-def shot_camera(session):
+def shot_rgb_t_camera(session):
     video_service = session.service("ALVideoDevice")
     fps = 20
-    resolution = 2 # 0 == 160, 120 | 1 == 320, 240 | 2 == 640, 480
-    colorSpace = 11 # 11 == bgr?
-    name_id = video_service.subscribe("python_GVM", resolution, colorSpace, fps)
+    resolution = 2      # 0 == 160, 120 | 1 == 320, 240 | 2 == 640, 480
+    colorSpace = 11     # 11 == bgr?
+    name_id = video_service.subscribe("rgb_t", 0, resolution, colorSpace, fps)
+    # video_service.subscribe(name, idx, resolution, color space, fps)
 
     for i in range(2):
         pepper_img = video_service.getImageRemote(name_id)
@@ -25,8 +24,22 @@ def shot_camera(session):
 
     video_service.unsubscribe(name_id)
 
-def record_video(session):
-    video_service = session.service("ALVideoRecorder")
+def shot_depth_camera(session):
+    video_service = session.service("ALVideoDevice")
+    fps = 20
+    resolution = 2
+    colorSpace = 1  # 1 == obly Y(luma component) equivalent to one unsigned char
+    name_id = video_service.subscribe("dep", resolution, colorSpace, fps)
+
+    for i in range(2):
+        pepper_img = video_service.getImageRemote(name_id)
+        width, height = pepper_img[0], pepper_img[1]
+        array = pepper_img[6]
+        img_str = str(bytearray(array))
+        im = Image.frombytes("L", (width, height), img_str)
+        im.save("image/depth_"+str(i)+'.png', "PNG")
+
+    video_service.unsubscribe(name_id)
 
 
 
@@ -53,6 +66,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # shot_camera(session)
-    record_video(session)
+    shot_depth_camera(session)
 
 

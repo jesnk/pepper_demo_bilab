@@ -10,15 +10,19 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 
+ADDRESS = "192.168.1.188"
+PORT = 9559
+
 # naoqi Proxy 정의
-motion = ALProxy("ALMotion", "192.168.1.188", 9559)
-tts = ALProxy("ALTextToSpeech", "192.168.1.188", 9559)
-video_device = ALProxy("ALVideoDevice", "192.168.1.188", 9559)
+motion = ALProxy("ALMotion", ADDRESS, PORT)
+tts = ALProxy("ALTextToSpeech", ADDRESS, PORT)
+video_device = ALProxy("ALVideoDevice", ADDRESS, PORT)
 
 # 촬영 이미지 조건 설정
 resolution = 2     #VGA
 colorSpace = 11    #RGB
 fps = 5
+# set the condition
 videoClient = video_device.subscribe("python_client", resolution, colorSpace, fps)
 
 # 위치 및 모션 초기 조건 설정
@@ -90,4 +94,3 @@ while True:
         img_location_data = pd.DataFrame(img_location)
         img_location_data.to_csv("./" + img_dir + "/" + str(date_time) + ".csv")
         break
-

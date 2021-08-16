@@ -2,7 +2,7 @@
 
 Pepper demo for BioIntelligence Lab.
 
-Developed by Jesoon Kang, Young-Jae Yoo in BioIntelligence LAB (BI LAB) & Cognitive Recognition Artifical Intelligence Group (CRAIG)
+Developed by Jesoon Kang, Youngjae Yoo in BioIntelligence LAB (BI LAB) & Cognitive Recognition Artifical Intelligence Group (CRAIG)
 
 
 ## Description

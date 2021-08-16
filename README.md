@@ -37,7 +37,7 @@ pip install pillow requests bs4
 
 First of all, clone this repo in local device.
 ```
-git clone https://github.com/jesn1219/pepper_demo_v1.git
+git clone https://github.com/jesn1219/pepper_demo_bilab.git
 ```
 
 Before executes our codes, 

@@ -2,8 +2,8 @@ import time
 from naoqi import ALProxy
 
 from data_list import *
-from cameras import take_photo
-from functions import updown, saju
+# from cameras import take_photo
+# from functions import updown, saju
 from functions.play_music import *
 
 
@@ -136,7 +136,7 @@ class Transition:
                 srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 srv['tablet'].showWebview(self.get_html_address(next_scene))
                 srv['aas'].say(
-                    "Let me introduce our lab. Our bio-intelligence lab is conducting the following studies. First, we are conducting interdisciplinary research in various fields such as artificial intelligence, psychology, and cognitive science to develop human-level artificial intelligence such as Baby Mind and VTT. We are also actively conducting research on robots on various platforms, such as home robots that work with humans and Robocup, a world robot competition.",
+                    "Let me introduce our lab. Our bio-intelligence lab is conducting the following studies. First, we are conducting interdisciplinary research in various fields such as artificial intelligence, psychology, and cognitive science to develop human-level artificial intelligence such as PICA and LBA. We are also actively conducting research on robots on various platforms, such as home robots that work with humans and Robocup, a world robot competition.",
                     aas_configuration)
 
                 next_scene = 'tour_ourlab2'
@@ -194,13 +194,13 @@ class Transition:
 
             elif input_ret['touch_position'] == 'BUTTON_RIGHT':
                 file_path = "/opt/aldebaran/www/apps/bi-sound/UrbanStreet.mp3"
-                player = Dance(srv, "disco", PEPPER_IP)
-                player.motion()
+                # player = Dance(srv, "disco", PEPPER_IP)
+                # player.motion()
                 print("hello")
-                # player = ALProxy("ALAudioPlayer", PEPPER_IP, 9559)
-                # player.post.playFileFromPosition(file_path, 0)
-                # entertain.disco(srv)
-                # player.post.stopAll()
+                player = ALProxy("ALAudioPlayer", PEPPER_IP, 9559)
+                player.post.playFileFromPosition(file_path, 0)
+                entertain.disco(srv)
+                player.post.stopAll()
                 pass
 
             elif input_ret['touch_position'] == 'BUTTON_RIGHT_DOWN':

@@ -79,7 +79,7 @@ class Transition:
                 srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 srv['aas'].say(
                     "Are you curious about me? I am Pepper. It is a humanoid robot made by Softbank, and can use artificial intelligence. It is characterized by a cute appearance, and is introduced in various fields such as finance, bookstore, medical care, and distribution fields in Korea")
-                srv['tts'].setParameter("defaultVoiceSpeed", 70)
+                srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 return SCENES[next_scene]
 
         elif input_ret['type'] == 'speech':
@@ -102,17 +102,17 @@ class Transition:
                 next_scene = 'tour_hsr1'
                 srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 srv['tablet'].showWebview(self.get_html_address(next_scene))
-                srv['aas'].say("Let me explain the robots in our lab. First, HSR, a human helper robot, is a mobile operation robot.", aas_configuration)
+                srv['aas'].say("Let me explain the robots in our center. First, HSR, a human helper robot, is a mobile operation robot.", aas_configuration)
 
                 next_scene = 'tour_hsr2'
                 srv['tablet'].showWebview(self.get_html_address(next_scene))
                 srv['aas'].say("It is about 1 meter tall and is a versatile robot that can recognize objects through various cameras and pick them up with a gripper. But is it ugly than me?",
                                aas_configuration)
 
-                next_scene = 'tour_blitz'
+                next_scene = 'tour_bigbot'
                 srv['tablet'].showWebview(self.get_html_address(next_scene))
                 srv['aas'].say(
-                    "The next robot, Blitz. It is a robot made by combining a base robot, which is specialized in moving objects, and a UR5 robot that picks up objects. In addition, it is a mobile operation robot that is equipped with sound and camera sensors, capable of recognizing objects and gripping them with a gripper.",
+                    "The next robot, big bot. It is a robot made by combining a base robot, which is specialized in moving objects, and a kinova arm robot that picks up objects. In addition, it is a mobile operation robot that is equipped with sound and camera sensors, capable of recognizing objects and gripping them with a gripper.",
                     aas_configuration)
 
                 next_scene = 'tour_pepper1'
@@ -126,7 +126,7 @@ class Transition:
                     "I have a cute appearance, and has been introduced in various fields such as finance, bookstores, medical care, and distribution fields in Korea. In addition, it is used as a standard robot in S, S, P, L, among the world robot competitions, Robo Cup League.",
                     aas_configuration)
 
-                srv['tts'].setParameter("defaultVoiceSpeed", 70)
+                srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 next_scene = 'tour'
                 srv['tablet'].showWebview(self.get_html_address(next_scene))
                 return SCENES[next_scene]
@@ -136,14 +136,14 @@ class Transition:
                 srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 srv['tablet'].showWebview(self.get_html_address(next_scene))
                 srv['aas'].say(
-                    "Let me introduce our lab. Our bio-intelligence lab is conducting the following studies. First, we are conducting interdisciplinary research in various fields such as artificial intelligence, psychology, and cognitive science to develop human-level artificial intelligence such as PICA and LBA. We are also actively conducting research on robots on various platforms, such as home robots that work with humans and Robocup, a world robot competition.",
+                    "Let me introduce our lab. Our bio-intelligence lab is conducting the following studies. First, we are conducting interdisciplinary research in various fields such as artificial intelligence, psychology, and cognitive science to develop human-level artificial intelligence such as PEECA and LBA. We are also actively conducting research on robots on various platforms, such as home robots that work with humans and Robocup, a world robot competition.",
                     aas_configuration)
 
                 next_scene = 'tour_ourlab2'
                 srv['tablet'].showWebview(self.get_html_address(next_scene))
                 srv['aas'].say("If you have any other questions or inquiries, please refer to the following website or contact us.", aas_configuration)
 
-                srv['tts'].setParameter("defaultVoiceSpeed", 70)
+                srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 next_scene = 'tour'
                 srv['tablet'].showWebview(self.get_html_address(next_scene))
                 return SCENES[next_scene]
@@ -166,7 +166,7 @@ class Transition:
                 srv['aas'].say(
                     "Are you curious about me? I am Pepper. It is a humanoid robot made by Softbank, and can use artificial intelligence. It is characterized by a cute appearance, and is introduced in various fields such as finance, bookstore, medical care, and distribution fields in Korea",
                     aas_configuration)
-                srv['tts'].setParameter("defaultVoiceSpeed", 70)
+                srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 return SCENES[next_scene]
 
     def entertain(self, srv, input_ret):

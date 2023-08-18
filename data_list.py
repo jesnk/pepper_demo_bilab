@@ -6,7 +6,7 @@ PEPPER_IP = '192.168.1.188'
 # the width and the height of the screen
 FRAME_WIDTH = 1280
 FRAME_HEIGHT = 800
-DEFAULT_VOLUME = 70
+DEFAULT_VOLUME = 100
 
 # dictionary of the boundaries
 TOUCH_LIST = dict()

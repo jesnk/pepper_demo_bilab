@@ -324,7 +324,7 @@ def transition(srv, scene, input_ret):
                 srv['tts'].setParameter("defaultVoiceSpeed", 100)
                 srv['tablet'].showWebview(get_html_address(next_scene))
                 srv['aas'].say(
-                    "Let me introduce our lab. Our bio-intelligence lab is conducting the following studies. First, we are conducting interdisciplinary research in various fields such as artificial intelligence, psychology, and cognitive science to develop human-level artificial intelligence such as Baby Mind and VTT. We are also actively conducting research on robots on various platforms, such as home robots that work with humans and Robocup, a world robot competition.",
+                    "Let me introduce our lab. Our bio-intelligence lab is conducting the following studies. First, we are conducting interdisciplinary research in various fields such as artificial intelligence, psychology, and cognitive science to develop human-level artificial intelligence such as PEECA and LBA. We are also actively conducting research on robots on various platforms, such as home robots that work with humans and Robocup, a world robot competition.",
                     aas_configuration)
 
                 next_scene = 'tour_ourlab2'
